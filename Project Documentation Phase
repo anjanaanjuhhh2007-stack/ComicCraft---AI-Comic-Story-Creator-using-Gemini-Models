@@ -1,1 +1,930 @@
 Project Documentation Phase
+# ComicCraft — Project Documentation Phase
+
+ The **Project Documentation Phase** consolidates the brainstorming, design, and development decisions into a professional documentation package. This documentation can be used for a **college/project submission, GitHub repository, software project report, or development handoff**.
+
+ ## 1\. Project Overview
+
+ ### Project Name
+
+ **ComicCraft — AI Comic Story Creator Using Gemini Models**
+
+ ### Project Type
+
+ AI-powered web application.
+
+ ### Project Objective
+
+ ComicCraft is designed to help users transform simple story ideas into structured, editable comic stories using Google's Gemini models.
+
+ The system assists with:
+
+ - Story generation
+- Character creation
+- Story outlining
+- Comic page planning
+- Panel creation
+- Dialogue generation
+- Story continuation
+- AI-assisted editing
+- Comic preview
+- Project saving
+- Exporting
+
+---
+
+ # 2\. Problem Statement
+
+ Creating a comic traditionally requires multiple skills:
+
+ - Creative writing
+- Character development
+- Storyboarding
+- Dialogue writing
+- Scene composition
+- Panel planning
+- Illustration
+- Editing
+
+ Beginners may have good story ideas but lack the technical or artistic skills needed to turn those ideas into comics.
+
+ **ComicCraft addresses this problem by providing an AI-assisted workflow that converts a user's idea into an editable comic structure.**
+
+---
+
+ # 3\. Proposed Solution
+
+ ComicCraft provides a visual comic-creation environment where users can:
+
+```
+Idea
+ ↓
+AI Story
+ ↓
+Characters
+ ↓
+Story Outline
+ ↓
+Comic Pages
+ ↓
+Comic Panels
+ ↓
+Dialogue
+ ↓
+Editing
+ ↓
+Preview
+ ↓
+Export
+```
+
+ The user remains in control of the final content while Gemini assists with the creative process.
+
+---
+
+ # 4\. Project Objectives
+
+ ### Primary objectives
+
+ 1. Develop an easy-to-use AI comic creation platform.
+2. Integrate Gemini models for story generation.
+3. Automatically generate structured comic content.
+4. Allow users to edit AI-generated content.
+5. Maintain character and story consistency.
+6. Provide individual AI regeneration tools.
+7. Allow users to save and manage comic projects.
+8. Provide a readable comic preview.
+9. Support comic export.
+
+ ### Secondary objectives
+
+ - Reduce the barrier to comic creation.
+- Help beginners learn storytelling.
+- Encourage creative experimentation.
+- Provide an extensible foundation for future image-generation capabilities.
+
+---
+
+ # 5\. Scope
+
+ ## In Scope
+
+ - User interface
+- Comic project management
+- Story generation
+- Character generation
+- Story outline
+- Page and panel generation
+- Dialogue generation
+- AI rewriting
+- Panel regeneration
+- Story continuation
+- Comic editor
+- Story Bible
+- Preview
+- Save/load
+- Export
+
+ ## Out of Scope for MVP
+
+ - Professional publishing workflow
+- Physical printing
+- Real-time multiplayer editing
+- Large public social network
+- Marketplace
+- Advanced animation
+- Full professional illustration suite
+
+ These can be considered future enhancements.
+
+---
+
+ # 6\. Target Users
+
+ ComicCraft is designed for:
+
+ - Students
+- Writers
+- Comic enthusiasts
+- Beginner artists
+- Content creators
+- Teachers
+- Parents
+- Storytellers
+- Indie comic creators
+
+---
+
+ # 7\. User Roles
+
+ ### Creator/User
+
+ Can:
+
+ - Create projects
+- Generate stories
+- Manage characters
+- Edit panels
+- Modify dialogue
+- Regenerate content
+- Save projects
+- Preview comics
+- Export comics
+
+ ### Administrator
+
+ For a future production version:
+
+ - Manage users
+- Monitor usage
+- Manage AI limits
+- Review system logs
+- Manage templates
+
+---
+
+ # 8\. Functional Requirements
+
+ ## FR-01 — User Registration
+
+ The system should allow users to create an account.
+
+ ## FR-02 — User Authentication
+
+ Users should be able to sign in and sign out.
+
+ ## FR-03 — Project Creation
+
+ Users should be able to create a new comic project.
+
+ ## FR-04 — Story Input
+
+ Users should provide:
+
+ - Story idea
+- Genre
+- Style
+- Tone
+- Number of pages
+- Panels per page
+
+ ## FR-05 — AI Story Generation
+
+ The system should send the user's requirements to Gemini and generate structured comic content.
+
+ ## FR-06 — Character Generation
+
+ The system should generate character profiles.
+
+ ## FR-07 — Page Generation
+
+ The system should divide the story into pages.
+
+ ## FR-08 — Panel Generation
+
+ Each page should contain individual panels.
+
+ ## FR-09 — Dialogue Generation
+
+ Panels should support character dialogue and captions.
+
+ ## FR-10 — Content Editing
+
+ Users should be able to modify AI-generated content.
+
+ ## FR-11 — Panel Regeneration
+
+ Users should be able to regenerate an individual panel.
+
+ ## FR-12 — Dialogue Rewriting
+
+ Users should be able to request alternative dialogue.
+
+ ## FR-13 — Story Continuation
+
+ Users should be able to continue an existing comic.
+
+ ## FR-14 — Project Saving
+
+ Projects should be saved to persistent storage.
+
+ ## FR-15 — Comic Preview
+
+ Users should be able to read the comic in a dedicated reader.
+
+ ## FR-16 — Export
+
+ Users should be able to export the comic.
+
+---
+
+ # 9\. Non-Functional Requirements
+
+ ### Performance
+
+ The application should provide responsive interactions and meaningful loading feedback during AI generation.
+
+ ### Security
+
+ - API keys must remain server-side.
+- User projects must be isolated.
+- API requests must be validated.
+- AI output must be validated before database storage.
+
+ ### Usability
+
+ The interface should be understandable to users without technical knowledge.
+
+ ### Scalability
+
+ The architecture should allow future additions such as:
+
+ - Image generation
+- Collaboration
+- Public comic sharing
+- Mobile applications
+
+ ### Maintainability
+
+ AI operations, database logic and UI components should remain modular.
+
+---
+
+ # 10\. System Architecture
+
+```
+                     USER
+                       │
+                       ▼
+              ┌─────────────────┐
+              │   ComicCraft UI  │
+              │ React / Next.js  │
+              └────────┬────────┘
+                       │
+                       ▼
+              ┌─────────────────┐
+              │  API Layer      │
+              │ Next.js Routes  │
+              └───────┬─────────┘
+                      │
+          ┌───────────┼────────────┐
+          │           │            │
+          ▼           ▼            ▼
+      Gemini API   PostgreSQL   Storage
+          │           │            │
+          ▼           ▼            ▼
+       AI Story    Projects      Assets
+       AI Panels   Characters
+       AI Dialogue Pages
+```
+
+---
+
+ # 11\. Technology Stack
+
+ | Component | Technology |
+| --- | --- |
+| Frontend | React |
+| Framework | Next.js |
+| Programming Language | TypeScript |
+| Styling | Tailwind CSS |
+| AI | Gemini models |
+| AI SDK | Google GenAI SDK |
+| Backend | Next.js API routes |
+| Database | PostgreSQL |
+| ORM | Prisma |
+| Validation | Zod |
+| State Management | Zustand/React state |
+| Authentication | Auth.js |
+| Deployment | Vercel |
+
+---
+
+ # 12\. Gemini Integration
+
+ Gemini is responsible for the creative intelligence layer.
+
+ ### AI operations
+
+```
+generateStory()
+generateCharacters()
+generateOutline()
+generatePanels()
+generateDialogue()
+rewriteDialogue()
+regeneratePanel()
+continueStory()
+```
+
+ The application should use structured output so that AI responses can be transformed into reliable application data.
+
+---
+
+ # 13\. AI Data Structure
+
+ A comic can be represented as:
+
+```
+ComicProject
+│
+├── Metadata
+│
+├── StoryBible
+│
+├── Characters
+│
+├── Pages
+│   │
+│   ├── Panel
+│   │    ├── Scene
+│   │    ├── Caption
+│   │    ├── Dialogue
+│   │    └── Visual Prompt
+│   │
+│   └── Panel
+│
+└── Assets
+```
+
+---
+
+ # 14\. Story Bible
+
+ The Story Bible stores persistent creative information.
+
+ ### Example
+
+```
+Story:
+The Robot Beneath Room 17
+
+World:
+Modern high school
+
+Tone:
+Funny science-fiction adventure
+
+Main Character:
+Arjun
+
+Appearance:
+Black hair, blue jacket
+
+Personality:
+Curious, brave, sarcastic
+
+Important Rule:
+The robot should remain mysterious until the final chapter.
+```
+
+ The Story Bible is supplied as relevant context to subsequent Gemini requests.
+
+---
+
+ # 15\. Database Documentation
+
+ Main entities:
+
+```
+User
+ │
+ └── ComicProject
+       │
+       ├── StoryBible
+       ├── Character
+       ├── Page
+       │    └── Panel
+       │         └── Dialogue
+       └── Asset
+```
+
+ ### ComicProject
+
+ Stores:
+
+ - Project ID
+- User ID
+- Title
+- Description
+- Genre
+- Style
+- Status
+- Created date
+- Updated date
+
+ ### Character
+
+ Stores:
+
+ - Name
+- Description
+- Personality
+- Appearance
+- Role
+
+ ### Page
+
+ Stores:
+
+ - Page number
+- Page title
+- Project reference
+
+ ### Panel
+
+ Stores:
+
+ - Panel number
+- Scene description
+- Visual prompt
+- Caption
+- Image reference
+
+ ### Dialogue
+
+ Stores:
+
+ - Character
+- Text
+- Position
+
+---
+
+ # 16\. API Documentation
+
+ ## Create Project
+
+```
+POST /api/comics
+```
+
+ Creates a new comic project.
+
+---
+
+ ## Get Projects
+
+```
+GET /api/comics
+```
+
+ Returns the authenticated user's projects.
+
+---
+
+ ## Get Comic
+
+```
+GET /api/comics/:id
+```
+
+ Returns a specific project.
+
+---
+
+ ## Generate Story
+
+```
+POST /api/ai/story
+```
+
+ Generates a complete initial comic structure.
+
+---
+
+ ## Generate Characters
+
+```
+POST /api/ai/characters
+```
+
+ Generates character profiles.
+
+---
+
+ ## Regenerate Panel
+
+```
+POST /api/ai/regenerate-panel
+```
+
+ Generates an alternative version of a selected panel.
+
+---
+
+ ## Rewrite Dialogue
+
+```
+POST /api/ai/rewrite-dialogue
+```
+
+ Creates alternative dialogue.
+
+---
+
+ ## Continue Story
+
+```
+POST /api/ai/continue-story
+```
+
+ Generates the next part of an existing comic.
+
+---
+
+ # 17\. User Interface Documentation
+
+ ### Main screens
+
+```
+Landing Page
+      ↓
+Authentication
+      ↓
+Dashboard
+      ↓
+Create Comic
+      ↓
+Generation
+      ↓
+Comic Editor
+      ↓
+Preview
+      ↓
+Export
+```
+
+ ### Editor
+
+ The editor contains:
+
+ - Header
+- Character sidebar
+- Comic canvas
+- Panel controls
+- AI assistant
+- Page navigation
+
+---
+
+ # 18\. User Workflow
+
+ ### New user
+
+```
+Visit ComicCraft
+       ↓
+Create account
+       ↓
+Dashboard
+       ↓
+Create Comic
+       ↓
+Enter idea
+       ↓
+Select options
+       ↓
+Generate
+```
+
+ ### Returning user
+
+```
+Login
+ ↓
+Dashboard
+ ↓
+Recent Projects
+ ↓
+Open Comic
+ ↓
+Continue Editing
+```
+
+---
+
+ # 19\. Error Handling Documentation
+
+ The system should handle:
+
+ ### AI failure
+
+```
+Unable to generate content.
+
+[Try Again]
+```
+
+ ### Invalid AI response
+
+```
+The generated content could not be processed.
+
+[Regenerate]
+```
+
+ ### Network error
+
+```
+Connection problem.
+
+Your saved work is safe.
+```
+
+ ### Database error
+
+```
+We couldn't save your changes.
+
+[Retry]
+```
+
+ The application should avoid losing existing user work when an AI operation fails.
+
+---
+
+ # 20\. Security Documentation
+
+ Security controls include:
+
+```
+Authentication
+      ↓
+Authorization
+      ↓
+Input Validation
+      ↓
+API Processing
+      ↓
+AI Output Validation
+      ↓
+Database
+```
+
+ Important security requirements:
+
+ - Store API keys in environment variables.
+- Never expose Gemini credentials to the browser.
+- Validate request payloads.
+- Validate AI responses.
+- Verify project ownership.
+- Restrict database operations to authorized users.
+- Rate-limit expensive AI operations.
+
+---
+
+ # 21\. Testing Documentation
+
+ ## Unit Testing
+
+ Test:
+
+ - Zod schemas
+- Gemini response parsing
+- Utility functions
+- Database operations
+
+ ## Integration Testing
+
+ Test:
+
+```
+User Input
+ ↓
+API
+ ↓
+Gemini
+ ↓
+Validation
+ ↓
+Database
+```
+
+ ## UI Testing
+
+ Test:
+
+ - Form submission
+- Project creation
+- Panel editing
+- Dialogue editing
+- Saving
+- Preview
+- Export
+
+ ## AI Testing
+
+ Test different categories:
+
+ - Simple prompts
+- Complex prompts
+- Different genres
+- Different tones
+- Different languages
+- Very short inputs
+- Long inputs
+- Invalid inputs
+
+---
+
+ # 22\. Deployment Documentation
+
+ Production environment:
+
+```
+User
+ │
+ ▼
+Vercel
+ │
+ ├── Next.js
+ ├── API Routes
+ │
+ └──────► Gemini API
+ │
+ └──────► PostgreSQL
+```
+
+ Required production environment variables:
+
+```
+GEMINI_API_KEY=
+DATABASE_URL=
+AUTH_SECRET=
+```
+
+ Before deployment:
+
+ - Run database migrations.
+- Configure environment variables.
+- Build the application.
+- Test production APIs.
+- Verify authentication.
+- Verify Gemini requests.
+- Test project isolation.
+
+---
+
+ # 23\. Project Testing Checklist
+
+```
+□ Landing page works
+□ Registration works
+□ Login works
+□ Dashboard works
+□ New project works
+□ Story generation works
+□ Character generation works
+□ Pages are generated
+□ Panels are generated
+□ Dialogue is generated
+□ Panel editing works
+□ Dialogue editing works
+□ Regeneration works
+□ Continue Story works
+□ Autosave works
+□ Preview works
+□ Export works
+□ Error handling works
+□ Authentication is secure
+□ Gemini key is not exposed
+```
+
+---
+
+ # 24\. Future Enhancements
+
+ After the MVP, ComicCraft can evolve into a larger creative platform.
+
+ ### Version 2
+
+ - AI-generated panel artwork
+- Character reference sheets
+- Character consistency
+- More comic layouts
+- Voice narration
+
+ ### Version 3
+
+ - Public comic library
+- Comic sharing
+- Collaboration
+- Comments
+- Creator profiles
+- Templates
+
+ ### Version 4
+
+ - Mobile app
+- Animated comics
+- Interactive comics
+- Story-to-video
+- Educational comic generation
+
+---
+
+ # 25\. Project Deliverables
+
+ The complete ComicCraft project documentation package should contain:
+
+```
+01. Project Proposal
+02. Problem Statement
+03. Objectives
+04. Scope
+05. Requirements Specification
+06. System Architecture
+07. UI/UX Design
+08. Database Design
+09. API Documentation
+10. Gemini AI Design
+11. Development Documentation
+12. Testing Documentation
+13. Security Documentation
+14. Deployment Guide
+15. User Guide
+16. Future Enhancements
+```
+
+---
+
+ # 26\. Final Project Summary
+
+ **ComicCraft — AI Comic Story Creator Using Gemini Models** is an AI-assisted creative platform that transforms a user's imagination into a structured comic.
+
+ The complete product pipeline is:
+
+```
+┌─────────────────────────────────────────┐
+│              COMICCRAFT                 │
+├─────────────────────────────────────────┤
+│                                         │
+│  💡 IDEA                                │
+│     ↓                                   │
+│  ✨ GEMINI AI                           │
+│     ↓                                   │
+│  📖 STORY                               │
+│     ↓                                   │
+│  🧑 CHARACTERS                          │
+│     ↓                                   │
+│  📄 PAGES                               │
+│     ↓                                   │
+│  🖼️ PANELS                              │
+│     ↓                                   │
+│  💬 DIALOGUE                            │
+│     ↓                                   │
+│  ✏️ EDITOR                              │
+│     ↓                                   │
+│  📚 COMIC READER                        │
+│     ↓                                   │
+│  📥 EXPORT                              │
+│                                         │
+└─────────────────────────────────────────┘
+```
+
+ ### Project vision
+
+ > **ComicCraft makes comic creation accessible by combining human creativity with Gemini-powered AI assistance.**
+
+ The documentation phase establishes the project as a complete software product rather than just an AI prompt generator, with a clear path from **idea → architecture → development → testing → deployment → future expansion**.
