@@ -1,1 +1,905 @@
 Project Development Phase
+# ComicCraft — Project Development Phase
+
+ The **Development Phase** converts the approved ComicCraft design into a working MVP. The goal is to build a functional AI comic-creation platform where users can enter an idea, use Gemini to generate a structured comic story, edit it, and preview the result.
+
+ ## 1\. Development Goal
+
+ ### MVP outcome
+
+ A user should be able to:
+
+```
+Create Project
+     ↓
+Enter Story Idea
+     ↓
+Select Genre + Style
+     ↓
+Generate with Gemini
+     ↓
+Receive Characters + Story + Pages + Panels
+     ↓
+Edit Comic
+     ↓
+Regenerate Content
+     ↓
+Preview Comic
+     ↓
+Save Project
+```
+
+---
+
+ # 2\. Development Stack
+
+ | Area | Technology |
+| --- | --- |
+| Framework | Next.js |
+| UI | React + TypeScript |
+| Styling | Tailwind CSS |
+| Components | shadcn/ui or custom UI |
+| AI | Gemini models |
+| AI SDK | Google GenAI SDK |
+| Validation | Zod |
+| Database | PostgreSQL |
+| ORM | Prisma |
+| Authentication | Auth.js |
+| State | React state / Zustand |
+| API | Next.js Route Handlers |
+| Export | PDF/image library |
+| Deployment | Vercel |
+
+---
+
+ # 3\. Initial Project Setup
+
+ Create the project:
+
+```
+npx create-next-app@latest comiccraft
+cd comiccraft
+```
+
+ Recommended selections:
+
+```
+TypeScript       Yes
+ESLint           Yes
+Tailwind CSS     Yes
+src/ directory   Yes
+App Router       Yes
+Import alias     Yes
+```
+
+ Install core dependencies:
+
+```
+npm install @google/genai zod
+npm install prisma @prisma/client
+npm install zustand
+npm install lucide-react
+```
+
+ Initialize Prisma:
+
+```
+npx prisma init
+```
+
+---
+
+ # 4\. Environment Configuration
+
+ Create:
+
+```
+.env.local
+```
+
+ Example:
+
+```
+GEMINI_API_KEY=your_gemini_api_key
+DATABASE_URL=your_postgresql_connection_string
+```
+
+ Also provide:
+
+```
+.env.example
+```
+
+```
+GEMINI_API_KEY=
+DATABASE_URL=
+```
+
+ The Gemini API key must remain **server-side**.
+
+---
+
+ # 5\. Project Structure
+
+ The initial implementation should use:
+
+```
+comiccraft/
+│
+├── src/
+│   ├── app/
+│   │   ├── page.tsx
+│   │   │
+│   │   ├── dashboard/
+│   │   │   └── page.tsx
+│   │   │
+│   │   ├── create/
+│   │   │   └── page.tsx
+│   │   │
+│   │   ├── comic/
+│   │   │   └── [id]/
+│   │   │       └── page.tsx
+│   │   │
+│   │   └── api/
+│   │       ├── comics/
+│   │       └── ai/
+│   │
+│   ├── components/
+│   │   ├── ui/
+│   │   ├── comic/
+│   │   ├── editor/
+│   │   ├── dashboard/
+│   │   └── ai/
+│   │
+│   ├── lib/
+│   │   ├── gemini.ts
+│   │   ├── db.ts
+│   │   └── validation.ts
+│   │
+│   ├── schemas/
+│   │   ├── comic.ts
+│   │   ├── character.ts
+│   │   └── ai.ts
+│   │
+│   └── store/
+│       └── editor-store.ts
+│
+├── prisma/
+│   └── schema.prisma
+│
+├── public/
+│
+├── .env.example
+└── package.json
+```
+
+---
+
+ # 6\. Database Development
+
+ The first database version can contain:
+
+```
+User
+  │
+  └── ComicProject
+       │
+       ├── StoryBible
+       ├── Character
+       ├── Page
+       │    └── Panel
+       │         └── Dialogue
+       └── Asset
+```
+
+ A simplified Prisma model:
+
+```
+model ComicProject {
+  id          String      @id @default(cuid())
+  title       String
+  description String?
+  genre       String
+  style       String
+  status      String      @default("draft")
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  characters Character[]
+  pages      Page[]
+}
+
+model Character {
+  id          String       @id @default(cuid())
+  projectId   String
+  name        String
+  description String
+  personality String?
+  appearance  String?
+  role        String?
+
+  project ComicProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+}
+
+model Page {
+  id          String  @id @default(cuid())
+  projectId   String
+  pageNumber  Int
+  title       String?
+
+  project ComicProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  panels  Panel[]
+
+  @@unique([projectId, pageNumber])
+}
+
+model Panel {
+  id              String  @id @default(cuid())
+  pageId          String
+  panelNumber     Int
+  sceneDescription String
+  visualPrompt    String?
+  caption         String?
+  imageUrl        String?
+
+  page     Page      @relation(fields: [pageId], references: [id], onDelete: Cascade)
+  dialogue Dialogue[]
+
+  @@unique([pageId, panelNumber])
+}
+
+model Dialogue {
+  id          String @id @default(cuid())
+  panelId     String
+  characterId String?
+  text        String
+  position    String?
+
+  panel Panel @relation(fields: [panelId], references: [id], onDelete: Cascade)
+}
+```
+
+ Then:
+
+```
+npx prisma migrate dev --name initial
+```
+
+---
+
+ # 7\. Gemini Integration
+
+ Create:
+
+```
+src/lib/gemini.ts
+```
+
+ The Gemini service should provide a central interface for AI operations.
+
+ Conceptually:
+
+```
+generateStory()
+generateCharacters()
+generateOutline()
+generatePanels()
+rewriteDialogue()
+regeneratePanel()
+continueStory()
+```
+
+ Instead of scattering Gemini calls throughout React components, all AI requests should go through this service.
+
+---
+
+ # 8\. Story Generation
+
+ The first major development feature is:
+
+ ### `POST /api/ai/story`
+
+ Request:
+
+```
+{
+  "idea": "A student discovers a robot beneath his school",
+  "genre": "Sci-Fi",
+  "style": "Comic Book",
+  "pages": 5,
+  "panelsPerPage": 4,
+  "tone": "Funny and adventurous"
+}
+```
+
+ Gemini should return structured comic data.
+
+```
+{
+  "title": "The Robot Beneath Room 17",
+  "summary": "...",
+  "characters": [],
+  "pages": []
+}
+```
+
+---
+
+ # 9\. Structured AI Validation
+
+ Never assume the AI response is valid.
+
+ The response should pass through Zod:
+
+```
+Gemini
+  ↓
+JSON
+  ↓
+Zod validation
+  ↓
+Valid?
+ ├── Yes → Database
+ └── No  → Retry / Error
+```
+
+ For example:
+
+```
+const ComicSchema = z.object({
+  title: z.string(),
+  summary: z.string(),
+  characters: z.array(CharacterSchema),
+  pages: z.array(PageSchema),
+});
+```
+
+ This is particularly important because the frontend expects predictable data.
+
+---
+
+ # 10\. Story Generation API
+
+ The API flow:
+
+```
+POST /api/ai/story
+        ↓
+Validate request
+        ↓
+Create Gemini prompt
+        ↓
+Call Gemini
+        ↓
+Parse structured response
+        ↓
+Validate with Zod
+        ↓
+Return comic data
+```
+
+ The client should receive something like:
+
+```
+{
+  "success": true,
+  "comic": {
+    "title": "...",
+    "characters": [],
+    "pages": []
+  }
+}
+```
+
+---
+
+ # 11\. Create Comic UI
+
+ The first functional screen should be the creation wizard.
+
+ ### Components
+
+```
+StoryForm
+ ├── IdeaInput
+ ├── GenreSelector
+ ├── StyleSelector
+ ├── ToneSelector
+ ├── PageCount
+ ├── PanelCount
+ └── GenerateButton
+```
+
+ The **Generate** button should:
+
+ 1. Validate the form.
+2. Display AI generation progress.
+3. Call `/api/ai/story`.
+4. Display the generated story.
+5. Save the project.
+6. Redirect to the editor.
+
+---
+
+ # 12\. AI Generation Experience
+
+ Instead of:
+
+ > Loading...
+
+ show:
+
+```
+✨ Creating your comic
+
+✓ Understanding your idea
+✓ Creating characters
+✓ Planning story
+✓ Designing panels
+● Writing dialogue
+○ Finalizing comic
+```
+
+ This makes the AI workflow understandable to the user.
+
+---
+
+ # 13\. Comic Editor Development
+
+ The editor is the central development milestone.
+
+ Build:
+
+```
+ComicEditor
+├── EditorHeader
+├── CharacterSidebar
+├── ComicCanvas
+│   └── ComicPage
+│       └── ComicPanel
+│           ├── PanelContent
+│           ├── Caption
+│           └── SpeechBubble
+├── AIAssistant
+└── PageNavigator
+```
+
+---
+
+ # 14\. Panel Editing
+
+ Each panel should support:
+
+```
+Edit Scene
+Edit Caption
+Edit Dialogue
+Regenerate
+Delete
+Move
+```
+
+ Example:
+
+```
+┌─────────────────────────────┐
+│                             │
+│       PANEL ARTWORK         │
+│                             │
+│   ┌─────────────────────┐   │
+│   │ "What's happening?" │   │
+│   └─────────────────────┘   │
+│                             │
+│ Caption: The lights died.   │
+│                             │
+│ [Edit] [Regenerate] [Delete]│
+└─────────────────────────────┘
+```
+
+---
+
+ # 15\. AI Assistant
+
+ The right-side AI panel can provide contextual actions:
+
+```
+AI ASSISTANT
+
+✨ Rewrite
+💬 Improve Dialogue
+🎭 Change Tone
+🔄 Regenerate Panel
+➡️ Continue Story
+📝 Expand Scene
+✂️ Shorten Scene
+```
+
+ The selected panel becomes the context for the operation.
+
+---
+
+ # 16\. Regenerate Panel
+
+ When the user selects:
+
+ **Regenerate Panel**
+
+ send:
+
+```
+Story Bible
++
+Current Page
++
+Current Panel
++
+User instruction
+```
+
+ to Gemini.
+
+ For example:
+
+ > “Make this scene more suspenseful.”
+
+ The returned panel replaces the existing panel only after user confirmation.
+
+ This prevents accidental loss of work.
+
+---
+
+ # 17\. Story Continuation
+
+ The **Continue Story** feature should use:
+
+```
+Existing Story
++
+Story Bible
++
+Last Page
++
+Last Panel
+```
+
+ Gemini generates the next sequence.
+
+```
+Page 5
+    ↓
+Continue
+    ↓
+Gemini
+    ↓
+Page 6
+    ↓
+Preview
+    ↓
+Accept
+```
+
+---
+
+ # 18\. Character Consistency
+
+ Implement the Story Bible during development rather than treating it as a later feature.
+
+ Example:
+
+```
+{
+  "characters": [
+    {
+      "name": "Arjun",
+      "appearance": "Black hair, blue jacket",
+      "personality": "Curious and sarcastic",
+      "role": "Main protagonist"
+    }
+  ],
+  "world": "Modern school in Chennai",
+  "tone": "Funny sci-fi adventure"
+}
+```
+
+ Whenever Gemini generates new content, relevant Story Bible information is included.
+
+---
+
+ # 19\. Save System
+
+ Use automatic saving.
+
+ Possible states:
+
+```
+Saving...
+Saved ✓
+Unsaved changes
+Save failed
+```
+
+ Autosave should not fire on every keystroke.
+
+ A short debounce interval can be used.
+
+---
+
+ # 20\. Preview Mode
+
+ Create a dedicated reader:
+
+```
+┌────────────────────────────────┐
+│ ← Back       Comic Reader      │
+├────────────────────────────────┤
+│                                │
+│         PAGE 1                 │
+│                                │
+│    ┌─────────┬─────────┐       │
+│    │ PANEL 1 │ PANEL 2 │       │
+│    ├─────────┴─────────┤       │
+│    │     PANEL 3       │       │
+│    └───────────────────┘       │
+│                                │
+├────────────────────────────────┤
+│       ←  1 / 6  →             │
+└────────────────────────────────┘
+```
+
+---
+
+ # 21\. Export Development
+
+ The MVP should support:
+
+ ### PDF
+
+```
+Comic pages
+     ↓
+Render pages
+     ↓
+PDF
+     ↓
+Download
+```
+
+ ### Image
+
+ Allow:
+
+```
+Download Page
+Download Entire Comic
+```
+
+---
+
+ # 22\. Development Milestones
+
+ ## Milestone 1 — Foundation
+
+ - Next.js project
+- Tailwind
+- Component system
+- Environment configuration
+- Database
+- Prisma
+
+ **Deliverable:** Running application foundation.
+
+---
+
+ ## Milestone 2 — Authentication & Dashboard
+
+ - Sign in
+- Dashboard
+- Create project
+- Project list
+- Delete project
+
+ **Deliverable:** User can manage projects.
+
+---
+
+ ## Milestone 3 — Gemini Integration
+
+ - Gemini service
+- Prompt system
+- Structured output
+- Zod validation
+- Error handling
+
+ **Deliverable:** Working AI story generator.
+
+---
+
+ ## Milestone 4 — Comic Generation
+
+ - Character generation
+- Story generation
+- Page generation
+- Panel generation
+- Dialogue generation
+
+ **Deliverable:** AI-generated comic structure.
+
+---
+
+ ## Milestone 5 — Comic Editor
+
+ - Pages
+- Panels
+- Characters
+- Dialogue
+- Captions
+- Editing
+- Reordering
+
+ **Deliverable:** User can modify the generated comic.
+
+---
+
+ ## Milestone 6 — AI Editing
+
+ - Regenerate panel
+- Rewrite dialogue
+- Change tone
+- Expand scene
+- Continue story
+
+ **Deliverable:** AI-assisted editing workflow.
+
+---
+
+ ## Milestone 7 — Preview & Export
+
+ - Reader
+- Full-screen mode
+- PDF
+- Image export
+
+ **Deliverable:** Finished comic can be consumed/exported.
+
+---
+
+ # 23\. Testing Strategy
+
+ ### Unit testing
+
+ Test:
+
+ - Validation schemas
+- AI response parsing
+- Utility functions
+- Database functions
+
+ ### API testing
+
+ Test:
+
+```
+/api/ai/story
+/api/ai/regenerate-panel
+/api/ai/rewrite-dialogue
+/api/ai/continue-story
+```
+
+ ### UI testing
+
+ Test:
+
+ - Create comic
+- Edit panel
+- Add page
+- Delete panel
+- Save project
+- Preview
+
+ ### AI testing
+
+ Create a set of representative prompts:
+
+```
+Simple story
+Long story
+Kids story
+Sci-fi
+Fantasy
+Comedy
+Multilingual prompt
+Unexpected input
+```
+
+ Check that the structured output remains valid.
+
+---
+
+ # 24\. Performance Considerations
+
+ AI calls are expensive and potentially slow.
+
+ Therefore:
+
+ - Generate only what is necessary.
+- Cache reusable information.
+- Don't regenerate an entire comic for a single panel change.
+- Use asynchronous generation for large projects.
+- Show progress states.
+- Save intermediate results.
+- Avoid unnecessarily sending the entire database object to Gemini.
+- Use compact Story Bible context.
+
+---
+
+ # 25\. Development Security
+
+ Before deployment:
+
+```
+✓ API key server-side
+✓ Authentication
+✓ Authorization
+✓ Input validation
+✓ AI output validation
+✓ Rate limiting
+✓ Error handling
+✓ Secure database queries
+✓ File upload restrictions
+✓ User project isolation
+```
+
+ A user should never be able to request another user's comic simply by changing an ID in the URL.
+
+---
+
+ # 26\. MVP Acceptance Criteria
+
+ ComicCraft's first release is ready when this complete scenario works:
+
+ > A new user opens ComicCraft → creates a project → enters a story idea → selects a genre and style → Gemini generates the story → characters and panels appear → the user edits dialogue → regenerates one panel → saves the project → opens Preview → exports the comic.
+
+ If that flow works reliably, the **core ComicCraft MVP is functional**.
+
+---
+
+ # 27\. Development Roadmap
+
+```
+PHASE 1
+Project Setup
+     ↓
+PHASE 2
+Database + Authentication
+     ↓
+PHASE 3
+Gemini Integration
+     ↓
+PHASE 4
+Story Generation
+     ↓
+PHASE 5
+Comic Editor
+     ↓
+PHASE 6
+AI Editing
+     ↓
+PHASE 7
+Preview + Export
+     ↓
+PHASE 8
+Testing
+     ↓
+PHASE 9
+Deployment
+```
+
+ ## Final Development Target
+
+ The first working version of **ComicCraft** should be a **creator-controlled AI comic studio**, not merely a prompt box.
+
+ The core loop is:
+
+ **Imagine → Generate → Edit → Regenerate → Save → Read → Export**
+
+ Once this MVP is working, the next phase can focus on **image generation, character visual consistency, advanced comic layouts, collaboration, sharing, and production deployment**.
