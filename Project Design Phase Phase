@@ -1,1 +1,824 @@
 Project Design Phase Phase
+# ComicCraft — Project Design Phase
+
+ The **Project Design Phase** turns the ComicCraft idea into a concrete product and technical blueprint. The focus here is on **architecture, screens, data flow, AI design, database structure, and component organization**—before implementation begins.
+
+ ## 1\. Project Definition
+
+ **Project:** ComicCraft\
+ **Type:** AI-powered web application\
+ **Purpose:** Transform a user's story idea into an editable comic using Gemini models.
+
+ ### Core flow
+
+```
+User Idea
+   ↓
+Comic Creation Wizard
+   ↓
+Gemini Story Engine
+   ↓
+Story + Characters + Pages + Panels
+   ↓
+Comic Editor
+   ↓
+AI Refinement
+   ↓
+Preview
+   ↓
+Export / Save
+```
+
+---
+
+ # 2\. System Architecture
+
+ A practical architecture for ComicCraft:
+
+```
+                    ┌──────────────────────┐
+                    │      ComicCraft      │
+                    │     Web Browser      │
+                    └──────────┬───────────┘
+                               │
+                         HTTPS / API
+                               │
+              ┌────────────────▼────────────────┐
+              │       Next.js Application       │
+              │                                 │
+              │  UI / Pages / Components        │
+              │  Authentication                 │
+              │  API Routes                     │
+              │  Validation                     │
+              └───────────────┬─────────────────┘
+                              │
+             ┌────────────────┼─────────────────┐
+             │                │                 │
+             ▼                ▼                 ▼
+      ┌────────────┐   ┌─────────────┐   ┌─────────────┐
+      │   Gemini   │   │  Database   │   │   Storage   │
+      │   Models   │   │             │   │             │
+      └────────────┘   └─────────────┘   └─────────────┘
+             │
+             ▼
+      Story Generation
+      Character Design
+      Panel Planning
+      Dialogue
+      Refinement
+```
+
+ The browser should **never receive the Gemini API key**.
+
+---
+
+ # 3\. Recommended Technology Stack
+
+ | Layer | Technology |
+| --- | --- |
+| Frontend | Next.js + React |
+| Language | TypeScript |
+| Styling | Tailwind CSS |
+| UI components | shadcn/ui or custom components |
+| AI | Gemini API |
+| AI SDK | Google GenAI SDK |
+| API | Next.js Route Handlers |
+| Validation | Zod |
+| Database | PostgreSQL |
+| ORM | Prisma |
+| Authentication | Auth.js or equivalent |
+| File storage | Cloud object storage |
+| Deployment | Vercel or equivalent |
+| Export | PDF/image generation library |
+
+The important architectural principle is that **Gemini should be behind server-side API routes**, rather than being called directly from React components.
+
+---
+
+ # 4\. Application Structure
+
+ ComicCraft can be divided into six major areas:
+
+```
+1. Landing
+2. Dashboard
+3. Comic Creation
+4. Comic Editor
+5. Comic Reader
+6. Settings
+```
+
+---
+
+ # 5\. Page Design
+
+ ## Landing Page
+
+ Purpose: Explain ComicCraft and get the user into the creation flow.
+
+```
+┌─────────────────────────────────────────────┐
+│ ComicCraft       Features  Gallery   Login │
+├─────────────────────────────────────────────┤
+│                                             │
+│       TURN YOUR IDEAS                       │
+│       INTO COMICS                           │
+│                                             │
+│  Create stories, characters and comic       │
+│  panels with AI.                            │
+│                                             │
+│          [ Create Your Comic ]              │
+│                                             │
+│        [ Example Comic Preview ]            │
+│                                             │
+├─────────────────────────────────────────────┤
+│ How ComicCraft Works                       │
+│                                             │
+│  01 Imagine → 02 Generate → 03 Edit       │
+│                                             │
+├─────────────────────────────────────────────┤
+│ Features                                    │
+│                                             │
+│ AI Stories | Characters | Panels | Editor  │
+└─────────────────────────────────────────────┘
+```
+
+---
+
+ # 6\. Dashboard Design
+
+```
+┌────────────┬─────────────────────────────────┐
+│ ComicCraft │ Dashboard                       │
+│            │                                 │
+│ Dashboard  │ Welcome back                   │
+│ My Comics  │                                 │
+│ Characters │ [+ Create New Comic]           │
+│ Templates  │                                 │
+│            │ Recent Projects                 │
+│ Settings   │                                 │
+│            │ ┌──────┐ ┌──────┐ ┌──────┐    │
+│            │ │Comic │ │Comic │ │Comic │    │
+│            │ │  01  │ │  02  │ │  03  │    │
+│            │ └──────┘ └──────┘ └──────┘    │
+└────────────┴─────────────────────────────────┘
+```
+
+---
+
+ # 7\. Comic Creation Wizard
+
+ The creation process should be divided into manageable steps.
+
+ ### Step 1 — Story Idea
+
+```
+What is your comic about?
+
+┌─────────────────────────────────────┐
+│ A student discovers a mysterious    │
+│ robot beneath his school...         │
+└─────────────────────────────────────┘
+```
+
+ ### Step 2 — Genre
+
+```
+○ Superhero
+○ Fantasy
+○ Sci-Fi
+○ Mystery
+○ Comedy
+○ Adventure
+○ Horror
+○ Romance
+○ Custom
+```
+
+ ### Step 3 — Characters
+
+ Allow AI to create characters or let users create them manually.
+
+ ### Step 4 — Style
+
+```
+Comic Book
+Manga
+Cartoon
+Noir
+Watercolor
+Retro
+Cinematic
+```
+
+ ### Step 5 — Story Settings
+
+ - Page count
+- Panels per page
+- Target audience
+- Tone
+- Language
+
+ ### Step 6 — Generate
+
+```
+       ✨ Ready to create?
+
+       [ Generate My Comic ]
+```
+
+---
+
+ # 8\. Comic Editor Design
+
+ This is the central application screen.
+
+```
+┌──────────────────────────────────────────────────────┐
+│ ← My Comic     Page 1 / 6       Save   Preview      │
+├───────────┬─────────────────────────────┬─────────────┤
+│           │                             │             │
+│ Characters│       COMIC PAGE            │  AI TOOLS   │
+│           │                             │             │
+│ 🧑 Alex   │  ┌──────────┬──────────┐   │ ✨ Generate │
+│ 🤖 Robo   │  │  PANEL 1 │  PANEL 2 │   │             │
+│ 🦹 Villain│  │          │          │   │ 🔄 Rewrite │
+│           │  ├──────────┴──────────┤   │             │
+│           │  │       PANEL 3        │   │ 💬 Dialogue│
+│           │  │                      │   │             │
+│           │  └──────────────────────┘   │ 🎭 Tone    │
+│           │                             │             │
+├───────────┴─────────────────────────────┴─────────────┤
+│  Page 1   Page 2   Page 3   Page 4   + Add Page       │
+└──────────────────────────────────────────────────────┘
+```
+
+---
+
+ # 9\. Editor Components
+
+ The editor should be built from reusable components.
+
+```
+ComicEditor
+│
+├── EditorHeader
+│
+├── CharacterSidebar
+│   └── CharacterCard
+│
+├── ComicCanvas
+│   └── ComicPage
+│       └── ComicPanel
+│           ├── Artwork
+│           ├── SpeechBubble
+│           └── Caption
+│
+├── AIAssistant
+│   ├── GenerateButton
+│   ├── RewriteButton
+│   ├── ContinueButton
+│   └── StyleButton
+│
+└── PageNavigator
+```
+
+---
+
+ # 10\. AI Architecture
+
+ Gemini should not be treated as one giant prompt.
+
+ ComicCraft should use several specialized AI operations.
+
+ ### AI services
+
+```
+GeminiService
+│
+├── generateStory()
+├── generateCharacters()
+├── generateOutline()
+├── generatePanels()
+├── generateDialogue()
+├── rewriteDialogue()
+├── regeneratePanel()
+├── continueStory()
+└── validateStory()
+```
+
+ This makes the application easier to maintain and gives users granular control.
+
+---
+
+ # 11\. Gemini Generation Pipeline
+
+ When the user clicks **Generate Comic**:
+
+```
+User Input
+    ↓
+Input Validation
+    ↓
+Story Generation
+    ↓
+Character Generation
+    ↓
+Story Outline
+    ↓
+Page Generation
+    ↓
+Panel Generation
+    ↓
+Dialogue Generation
+    ↓
+Story Consistency Check
+    ↓
+Save to Database
+    ↓
+Display Comic Editor
+```
+
+ For larger comics, the application should avoid sending the entire project blindly to every request. Instead, provide Gemini with the relevant **story bible + current page/panel context**.
+
+---
+
+ # 12\. Structured AI Output
+
+ ComicCraft should use structured data rather than relying on free-form AI text.
+
+ Example:
+
+```
+{
+  "title": "The Robot Beneath Room 17",
+  "genre": "Sci-Fi Adventure",
+  "tone": "Funny and mysterious",
+  "characters": [
+    {
+      "id": "char_01",
+      "name": "Arjun",
+      "age": 16,
+      "description": "Curious high-school student",
+      "personality": ["brave", "sarcastic"]
+    }
+  ],
+  "pages": [
+    {
+      "pageNumber": 1,
+      "panels": [
+        {
+          "panelNumber": 1,
+          "sceneDescription": "A busy school hallway",
+          "caption": "Monday morning...",
+          "dialogue": [
+            {
+              "characterId": "char_01",
+              "text": "I'm definitely going to be late."
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+```
+
+ This allows React to render the comic deterministically.
+
+---
+
+ # 13\. Story Bible Design
+
+ A **Story Bible** should be created for every comic.
+
+```
+Story Bible
+│
+├── World
+├── Timeline
+├── Characters
+├── Locations
+├── Important Objects
+├── Story Rules
+├── Tone
+└── Visual Style
+```
+
+ This becomes persistent context for future AI operations.
+
+ It is particularly useful for:
+
+ > **Continue Story**
+
+ because Gemini can reference existing characters and events instead of inventing unrelated ones.
+
+---
+
+ # 14\. Database Design
+
+ A possible relational model:
+
+```
+User
+ │
+ └── ComicProject
+       │
+       ├── Character
+       │
+       ├── StoryBible
+       │
+       ├── Page
+       │     │
+       │     └── Panel
+       │           │
+       │           ├── Dialogue
+       │           └── Caption
+       │
+       └── Asset
+```
+
+ ### Main tables
+
+ **users**
+
+```
+id
+name
+email
+createdAt
+```
+
+ **comic\_projects**
+
+```
+id
+userId
+title
+description
+genre
+style
+status
+createdAt
+updatedAt
+```
+
+ **characters**
+
+```
+id
+projectId
+name
+description
+personality
+appearance
+role
+```
+
+ **pages**
+
+```
+id
+projectId
+pageNumber
+title
+layout
+```
+
+ **panels**
+
+```
+id
+pageId
+panelNumber
+sceneDescription
+visualPrompt
+caption
+imageUrl
+```
+
+ **dialogue**
+
+```
+id
+panelId
+characterId
+text
+position
+```
+
+---
+
+ # 15\. API Design
+
+ Suggested API structure:
+
+```
+POST /api/comics
+GET  /api/comics
+GET  /api/comics/:id
+PUT  /api/comics/:id
+DELETE /api/comics/:id
+```
+
+ ### AI endpoints
+
+```
+POST /api/ai/story
+POST /api/ai/characters
+POST /api/ai/outline
+POST /api/ai/panels
+POST /api/ai/dialogue
+POST /api/ai/regenerate-panel
+POST /api/ai/rewrite-dialogue
+POST /api/ai/continue-story
+```
+
+ ### Export
+
+```
+POST /api/export/pdf
+POST /api/export/image
+```
+
+---
+
+ # 16\. State Management
+
+ The editor has substantial state, so separate it into:
+
+```
+Project State
+ ├── comic metadata
+ ├── characters
+ ├── pages
+ └── story bible
+
+Editor State
+ ├── selected page
+ ├── selected panel
+ ├── selected character
+ ├── zoom
+ └── editing mode
+
+AI State
+ ├── generating
+ ├── operation
+ ├── progress
+ └── error
+```
+
+ A lightweight client-side state solution can be used for editor state, while the database remains the source of truth for saved projects.
+
+---
+
+ # 17\. AI Loading Experience
+
+ AI generation may take time, so don't show a generic spinner only.
+
+ Use a creative progress interface:
+
+```
+✨ Creating your comic...
+
+✓ Understanding your idea
+✓ Building characters
+✓ Planning story
+● Designing comic panels
+○ Writing dialogue
+○ Preparing your comic
+```
+
+ This makes the wait feel purposeful.
+
+---
+
+ # 18\. Error Handling
+
+ AI applications need explicit failure handling.
+
+ Possible errors:
+
+ - Gemini request failed
+- API quota exceeded
+- Invalid structured response
+- Network failure
+- Content rejected
+- Database failure
+- Export failure
+
+ Example:
+
+```
+Something went wrong while creating your comic.
+
+Your existing work is safe.
+
+[ Try Again ]   [ Save Draft ]
+```
+
+---
+
+ # 19\. Security Design
+
+ Important rules:
+
+ - Gemini API key stays server-side.
+- Validate all user input.
+- Validate Gemini output before saving.
+- Authenticate project access.
+- Users should only access their own projects.
+- Sanitize generated HTML/content where necessary.
+- Apply reasonable generation limits.
+- Don't trust AI-generated IDs or database references.
+- Rate-limit expensive AI endpoints.
+
+---
+
+ # 20\. Project Folder Structure
+
+ A clean Next.js structure:
+
+```
+comiccraft/
+│
+├── app/
+│   ├── page.tsx
+│   │
+│   ├── dashboard/
+│   │   └── page.tsx
+│   │
+│   ├── create/
+│   │   └── page.tsx
+│   │
+│   ├── comic/
+│   │   └── [id]/
+│   │       └── page.tsx
+│   │
+│   ├── reader/
+│   │   └── [id]/
+│   │       └── page.tsx
+│   │
+│   └── api/
+│       ├── comics/
+│       └── ai/
+│
+├── components/
+│   ├── ui/
+│   ├── comic/
+│   ├── editor/
+│   ├── dashboard/
+│   └── ai/
+│
+├── lib/
+│   ├── gemini.ts
+│   ├── db.ts
+│   ├── validation.ts
+│   └── export.ts
+│
+├── schemas/
+│   ├── comic.ts
+│   ├── character.ts
+│   └── ai.ts
+│
+├── prisma/
+│   └── schema.prisma
+│
+├── public/
+│
+├── .env.example
+│
+└── package.json
+```
+
+---
+
+ # 21\. Design System
+
+ ### Colors
+
+```
+Ink Black      #111111
+Paper White    #FFFDF5
+Comic Yellow   #FFD43B
+Action Red     #EF4444
+Creative Purple#7C3AED
+Soft Gray      #F3F4F6
+```
+
+ ### Visual language
+
+ Use:
+
+ - Thick borders
+- Rounded cards
+- Speech bubbles
+- Halftone patterns
+- Comic sound effects
+- Strong headings
+- Subtle paper texture
+- High-contrast buttons
+
+ The editor itself should remain clean despite the comic-inspired branding.
+
+---
+
+ # 22\. Responsive Design
+
+ ### Desktop
+
+ Three-column editor:
+
+```
+Characters | Canvas | AI Tools
+```
+
+ ### Tablet
+
+```
+Canvas
+─────────
+AI tools
+Characters
+```
+
+ ### Mobile
+
+ Use a focused interface:
+
+```
+Comic Page
+    ↓
+Panel
+    ↓
+Edit
+    ↓
+AI Tools
+```
+
+ Avoid trying to squeeze the complete desktop editor onto a phone.
+
+---
+
+ # 23\. MVP Architecture
+
+ For the first implementation, keep it manageable:
+
+```
+Next.js
+   │
+   ├── React UI
+   │
+   ├── API Routes
+   │
+   ├── Gemini API
+   │
+   └── PostgreSQL
+```
+
+ Start with:
+
+ 1. Story generation
+2. Character generation
+3. Page/panel generation
+4. Dialogue
+5. Editor
+6. Save/load
+7. Preview
+8. Export
+
+ Image generation, collaboration, social features and marketplace functionality can be added later.
+
+---
+
+ # 24\. Final Design Blueprint
+
+ The complete product can be viewed as four layers:
+
+```
+┌────────────────────────────────────────────┐
+│                 USER LAYER                 │
+│ Dashboard • Wizard • Editor • Reader       │
+├────────────────────────────────────────────┤
+│              CREATIVE LAYER                │
+│ Story • Characters • Panels • Dialogue     │
+├────────────────────────────────────────────┤
+│                 AI LAYER                   │
+│ Gemini • Structured Output • Story Bible   │
+├────────────────────────────────────────────┤
+│              DATA LAYER                    │
+│ PostgreSQL • Assets • Projects             │
+└────────────────────────────────────────────┘
+```
+
+ ### Design principle
+
+ **User → Creator → AI Assistant → Comic**
+
+ rather than:
+
+ **User → AI → Finished Output**
+
+ That distinction gives ComicCraft room for editing, iteration, storytelling continuity, and eventually a much richer comic-creation platform.
+
+ **Next phase:** **Development/Implementation Phase** — convert this design into the actual Next.js project, Gemini integration, Prisma schema, API routes, UI components, and working ComicCraft MVP.
