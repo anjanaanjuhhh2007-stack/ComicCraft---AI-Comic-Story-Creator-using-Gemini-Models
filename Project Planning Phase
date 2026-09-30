@@ -1,1 +1,821 @@
 Project Planning Phase
+# ComicCraft — Project Planning Phase
+
+ The **Project Planning Phase** defines how ComicCraft will be executed from idea to deployment. It converts the previous brainstorming, design, development, and documentation work into a practical **timeline, task breakdown, milestones, resources, risks, and deliverables**.
+
+ ## 1\. Project Planning Overview
+
+ **Project:** ComicCraft — AI Comic Story Creator Using Gemini Models
+
+ **Primary goal:** Build a web application that allows users to enter a story idea and use Gemini models to generate, edit, manage, preview, and export a comic.
+
+ ### Project lifecycle
+
+```
+Planning
+   ↓
+Requirements
+   ↓
+UI/UX Design
+   ↓
+Architecture
+   ↓
+Development
+   ↓
+AI Integration
+   ↓
+Testing
+   ↓
+Deployment
+   ↓
+Maintenance
+```
+
+---
+
+ # 2\. Project Goals
+
+ The project should achieve the following:
+
+ - Build a functional AI comic creation platform.
+- Integrate Gemini models into the application.
+- Generate structured stories rather than plain text.
+- Generate characters, pages, panels, captions, and dialogue.
+- Provide an interactive comic editor.
+- Allow AI-assisted regeneration and rewriting.
+- Maintain story and character consistency.
+- Save comic projects.
+- Provide comic preview and export.
+- Create a foundation for future image-generation features.
+
+---
+
+ # 3\. Project Scope
+
+ ## MVP Scope
+
+ The first release will include:
+
+```
+✓ Landing page
+✓ User authentication
+✓ Dashboard
+✓ Create comic
+✓ Story prompt
+✓ Genre selection
+✓ Style selection
+✓ Gemini story generation
+✓ Character generation
+✓ Page generation
+✓ Panel generation
+✓ Dialogue generation
+✓ Comic editor
+✓ AI regeneration
+✓ Story continuation
+✓ Save project
+✓ Preview
+✓ Export
+```
+
+ ## Future Scope
+
+ The following should be planned but not required for the initial MVP:
+
+```
+○ AI-generated artwork
+○ Character visual consistency
+○ Public comic gallery
+○ Social sharing
+○ Collaboration
+○ Voice narration
+○ Animated comics
+○ Mobile application
+○ Marketplace
+```
+
+---
+
+ # 4\. Project Team
+
+ A small team can divide responsibilities as follows:
+
+ | Role | Responsibility |
+| --- | --- |
+| Project Lead | Planning, coordination, milestones |
+| UI/UX Designer | Wireframes, visual design, usability |
+| Frontend Developer | React/Next.js interface |
+| Backend Developer | APIs, database, authentication |
+| AI Developer | Gemini integration and prompt design |
+| QA Tester | Testing and bug tracking |
+| Documentation Lead | Technical and user documentation |
+
+For a student/individual project, these roles can be performed by one person sequentially.
+
+---
+
+ # 5\. Technology Planning
+
+ ### Frontend
+
+ - Next.js
+- React
+- TypeScript
+- Tailwind CSS
+
+ ### Backend
+
+ - Next.js API routes
+- TypeScript
+
+ ### AI
+
+ - Gemini models
+- Google GenAI SDK
+
+ ### Database
+
+ - PostgreSQL
+- Prisma
+
+ ### Validation
+
+ - Zod
+
+ ### Authentication
+
+ - Auth.js
+
+ ### Deployment
+
+ - Vercel or equivalent hosting
+
+---
+
+ # 6\. Work Breakdown Structure
+
+ The project can be divided into **10 work packages**.
+
+```
+ComicCraft
+│
+├── 1. Planning
+├── 2. Requirements
+├── 3. UI/UX Design
+├── 4. Architecture
+├── 5. Frontend Development
+├── 6. Backend Development
+├── 7. Gemini Integration
+├── 8. Testing
+├── 9. Deployment
+└── 10. Documentation
+```
+
+---
+
+ # 7\. Phase 1 — Planning
+
+ ### Tasks
+
+ - Define project vision.
+- Define target users.
+- Define MVP.
+- Identify technical requirements.
+- Identify project risks.
+- Establish milestones.
+- Define deliverables.
+
+ ### Deliverable
+
+ **Approved Project Plan**
+
+---
+
+ # 8\. Phase 2 — Requirements Analysis
+
+ ### Tasks
+
+ - Document functional requirements.
+- Document non-functional requirements.
+- Define user stories.
+- Define AI requirements.
+- Define database requirements.
+- Define security requirements.
+- Define acceptance criteria.
+
+ ### Example user story
+
+ > As a user, I want to enter a simple story idea so that ComicCraft can generate a comic for me.
+
+ ### Deliverable
+
+ **Software Requirements Specification**
+
+---
+
+ # 9\. Phase 3 — UI/UX Design
+
+ ### Tasks
+
+ Design:
+
+ - Landing page
+- Login/signup
+- Dashboard
+- Comic creation wizard
+- Generation screen
+- Comic editor
+- AI assistant
+- Preview reader
+- Export interface
+
+ ### Design principle
+
+ The interface should make ComicCraft feel like a **creative studio**, not a conventional chatbot.
+
+ ### Deliverable
+
+ **UI/UX prototype and design system**
+
+---
+
+ # 10\. Phase 4 — Technical Architecture
+
+ ### Tasks
+
+ Define:
+
+ - Application architecture
+- API architecture
+- Database schema
+- Gemini integration
+- Authentication
+- Storage
+- Error handling
+- Security
+- Deployment architecture
+
+ ### Architecture
+
+```
+                 ┌───────────────┐
+                 │     User      │
+                 └───────┬───────┘
+                         ↓
+                 ┌───────────────┐
+                 │   Next.js UI  │
+                 └───────┬───────┘
+                         ↓
+                 ┌───────────────┐
+                 │   API Layer   │
+                 └───┬───────┬───┘
+                     │       │
+                     ↓       ↓
+                ┌────────┐ ┌──────────┐
+                │ Gemini │ │PostgreSQL│
+                └────────┘ └──────────┘
+```
+
+ ### Deliverable
+
+ **Technical Architecture Document**
+
+---
+
+ # 11\. Phase 5 — Frontend Development
+
+ ### Sprint tasks
+
+ #### Sprint 1
+
+ - Next.js setup
+- Tailwind configuration
+- Global styles
+- Navigation
+- Basic UI components
+
+ #### Sprint 2
+
+ - Landing page
+- Authentication screens
+- Dashboard
+- Project cards
+
+ #### Sprint 3
+
+ - Comic creation wizard
+- Form validation
+- Generation interface
+
+ #### Sprint 4
+
+ - Comic editor
+- Pages
+- Panels
+- Dialogue
+- Characters
+
+ #### Sprint 5
+
+ - AI assistant
+- Preview
+- Export interface
+
+ ### Deliverable
+
+ **Complete ComicCraft frontend**
+
+---
+
+ # 12\. Phase 6 — Backend Development
+
+ ### Tasks
+
+ Build:
+
+```
+Authentication
+     ↓
+Project API
+     ↓
+Character API
+     ↓
+Page API
+     ↓
+Panel API
+     ↓
+Save/Update API
+     ↓
+Export API
+```
+
+ ### Core endpoints
+
+```
+POST   /api/comics
+GET    /api/comics
+GET    /api/comics/:id
+PUT    /api/comics/:id
+DELETE /api/comics/:id
+```
+
+ ### Deliverable
+
+ **Functional backend**
+
+---
+
+ # 13\. Phase 7 — Gemini Integration
+
+ This is one of the most important project phases.
+
+ ### AI modules
+
+```
+Gemini AI
+│
+├── Story Generator
+├── Character Generator
+├── Story Planner
+├── Panel Generator
+├── Dialogue Generator
+├── Panel Regenerator
+├── Dialogue Rewriter
+└── Story Continuation
+```
+
+ ### Development sequence
+
+```
+Gemini connection
+       ↓
+Basic prompt
+       ↓
+Structured output
+       ↓
+Zod validation
+       ↓
+Database integration
+       ↓
+UI integration
+       ↓
+Error handling
+```
+
+---
+
+ # 14\. Prompt Engineering Plan
+
+ ComicCraft should maintain reusable prompt templates instead of putting prompts directly inside UI components.
+
+ Example:
+
+```
+prompts/
+├── story.ts
+├── characters.ts
+├── panels.ts
+├── dialogue.ts
+├── regenerate.ts
+└── continuation.ts
+```
+
+ Every prompt should specify:
+
+ - User idea
+- Genre
+- Tone
+- Style
+- Story Bible
+- Existing characters
+- Existing story context
+- Required output structure
+
+ This makes AI behavior easier to maintain and improve.
+
+---
+
+ # 15\. Phase 8 — Testing
+
+ Testing should occur continuously rather than only at the end.
+
+ ## Functional testing
+
+ Check:
+
+ - User registration
+- Login
+- Project creation
+- Story generation
+- Editing
+- Saving
+- Preview
+- Export
+
+ ## AI testing
+
+ Test:
+
+ - Different genres
+- Different story lengths
+- Different tones
+- Short prompts
+- Detailed prompts
+- Invalid input
+- Regeneration
+- Continuation
+
+ ## Security testing
+
+ Check:
+
+ - Authentication
+- Authorization
+- API key exposure
+- Project isolation
+- Input validation
+- API abuse/rate limits
+
+---
+
+ # 16\. Bug Management
+
+ Use categories:
+
+```
+Critical
+High
+Medium
+Low
+```
+
+ Example:
+
+ | Priority | Example |
+| --- | --- |
+| Critical | Users cannot access the application |
+| High | Gemini generation completely fails |
+| Medium | Panel editing doesn't save |
+| Low | Minor visual alignment issue |
+
+Bug lifecycle:
+
+```
+Reported
+   ↓
+Triaged
+   ↓
+Assigned
+   ↓
+In Development
+   ↓
+Fixed
+   ↓
+Retested
+   ↓
+Closed
+```
+
+---
+
+ # 17\. Project Timeline
+
+ A practical **10-week MVP schedule**:
+
+ | Week | Main Activity | Deliverable |
+| --- | --- | --- |
+| 1 | Planning & requirements | Requirements document |
+| 2 | UI/UX design | Wireframes/prototype |
+| 3 | Architecture & database | Technical foundation |
+| 4 | Frontend foundation | Core UI |
+| 5 | Backend & authentication | Working APIs |
+| 6 | Gemini integration | AI generation |
+| 7 | Comic editor | Editable comic |
+| 8 | AI editing & preview | Complete creative workflow |
+| 9 | Testing & bug fixing | Stable MVP |
+| 10 | Deployment & documentation | Production-ready project |
+
+---
+
+ # 18\. Milestone Plan
+
+ ### M1 — Project Foundation
+
+ **Target:** End of Week 1
+
+```
+✓ Requirements
+✓ Scope
+✓ Technology choices
+✓ Project plan
+```
+
+ ### M2 — Design Complete
+
+ **Target:** End of Week 2
+
+```
+✓ Wireframes
+✓ UI design
+✓ User flow
+```
+
+ ### M3 — Application Foundation
+
+ **Target:** End of Week 3
+
+```
+✓ Next.js
+✓ Database
+✓ Authentication
+✓ API foundation
+```
+
+ ### M4 — AI Prototype
+
+ **Target:** End of Week 6
+
+```
+✓ Gemini connection
+✓ Story generation
+✓ Characters
+✓ Panels
+```
+
+ ### M5 — Functional Editor
+
+ **Target:** End of Week 8
+
+```
+✓ Comic editor
+✓ AI editing
+✓ Save
+✓ Preview
+```
+
+ ### M6 — Release Candidate
+
+ **Target:** End of Week 10
+
+```
+✓ Testing
+✓ Bug fixes
+✓ Deployment
+✓ Documentation
+```
+
+---
+
+ # 19\. Project Dependencies
+
+ The development order should respect these dependencies:
+
+```
+Requirements
+    ↓
+UI/UX + Architecture
+    ↓
+Database + API
+    ↓
+Gemini Integration
+    ↓
+Comic Generation
+    ↓
+Editor
+    ↓
+Preview
+    ↓
+Export
+    ↓
+Testing
+    ↓
+Deployment
+```
+
+ For example, the comic editor should not be finalized before the comic data structure is established.
+
+---
+
+ # 20\. Risk Management
+
+ | Risk | Impact | Mitigation |
+| --- | --- | --- |
+| Gemini API failure | High | Retry/error handling |
+| Invalid AI output | High | Structured output + Zod |
+| AI costs increase | High | Usage limits and controlled generation |
+| Slow generation | Medium | Progress UI and optimized requests |
+| Story inconsistency | Medium | Story Bible |
+| Database failure | High | Backups and error handling |
+| Scope expansion | High | Strict MVP boundaries |
+| Security issue | High | Server-side keys and authorization |
+| Export bugs | Medium | Dedicated export testing |
+
+---
+
+ # 21\. Scope Control
+
+ A major planning principle is:
+
+ > **Build the smallest complete comic workflow first.**
+
+ Avoid adding too many features during MVP development.
+
+ ### MVP
+
+```
+Idea
+ ↓
+Gemini
+ ↓
+Story
+ ↓
+Panels
+ ↓
+Edit
+ ↓
+Preview
+ ↓
+Export
+```
+
+ ### Later
+
+```
+AI Artwork
+Collaboration
+Social Network
+Mobile App
+Animation
+Marketplace
+```
+
+ This prevents feature creep.
+
+---
+
+ # 22. Resource Planning
+
+ ## Development resources
+
+ ### Software
+
+ - Node.js
+- Next.js
+- VS Code
+- Git
+- GitHub
+- PostgreSQL
+- Gemini API
+
+ ### Design
+
+ - Figma or equivalent
+- Image/icon resources as appropriate
+
+ ### Infrastructure
+
+ - Web hosting
+- Database hosting
+- Object storage if artwork/assets are introduced
+
+---
+
+ # 23\. Version Control Strategy
+
+ Use Git.
+
+ ### Branches
+
+```
+main
+ │
+ ├── develop
+ │
+ ├── feature/gemini
+ ├── feature/editor
+ ├── feature/dashboard
+ └── fix/...
+```
+
+ ### Commit examples
+
+```
+feat: add comic creation wizard
+feat: integrate Gemini story generation
+feat: add panel editor
+fix: validate Gemini response
+fix: prevent unauthorized project access
+```
+
+---
+
+ # 24\. Definition of Done
+
+ A feature is considered complete when:
+
+```
+✓ Code implemented
+✓ UI completed
+✓ Validation added
+✓ Error handling added
+✓ Tested
+✓ No critical bugs
+✓ Documentation updated
+✓ Code committed
+```
+
+ For AI features, additionally:
+
+```
+✓ Structured output validated
+✓ Failure case tested
+✓ Prompt tested with multiple inputs
+✓ Token/request usage considered
+```
+
+---
+
+ # 25\. Project Success Criteria
+
+ ComicCraft should be considered successful when a user can independently complete the following:
+
+ > **Sign in → create a comic → enter an idea → generate a story with Gemini → receive characters and panels → edit the content → regenerate a panel → save the project → preview the comic → export it.**
+
+ The system should perform this workflow reliably without requiring the user to understand how Gemini or the underlying technology works.
+
+---
+
+ # 26\. Final Project Plan
+
+```
+                         COMICCRAFT
+                             │
+              ┌──────────────┴──────────────┐
+              │                             │
+          PLANNING                       DESIGN
+              │                             │
+              └──────────────┬──────────────┘
+                             ↓
+                        DEVELOPMENT
+                             │
+             ┌───────────────┼───────────────┐
+             ↓               ↓               ↓
+          FRONTEND        BACKEND          GEMINI
+             │               │               │
+             └───────────────┼───────────────┘
+                             ↓
+                           EDITOR
+                             ↓
+                          TESTING
+                             ↓
+                         DEPLOYMENT
+                             ↓
+                        MAINTENANCE
+```
+
+ ## Final Planning Objective
+
+ The ComicCraft project should progress in a controlled sequence:
+
+ **Plan → Design → Build → Integrate Gemini → Test → Deploy → Improve**
+
+ The **MVP priority is the complete creator workflow**, while advanced capabilities such as AI artwork, character visual consistency, collaboration, and animated comics should remain future expansion areas.
