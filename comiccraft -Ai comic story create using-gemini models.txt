@@ -1,0 +1,583 @@
+Absolutely. Below is a **complete runnable ComicCraft starter project** with a modern UI and Gemini integration.
+
+ ### 1\. Create the project
+
+```
+npx create-next-app@latest comiccraft --typescript --tailwind --eslint --app
+cd comiccraft
+npm install @google/genai
+```
+
+ Create `.env.local`:
+
+```
+GEMINI_API_KEY=YOUR_GEMINI_API_KEY
+```
+
+ ### 2\. Replace `app/page.tsx`
+
+```
+"use client";
+
+import { useState } from "react";
+
+type Dialogue = {
+  character: string;
+  text: string;
+};
+
+type Panel = {
+  panelNumber: number;
+  sceneDescription: string;
+  caption: string;
+  visualPrompt: string;
+  dialogue: Dialogue[];
+};
+
+type Page = {
+  pageNumber: number;
+  title: string;
+  panels: Panel[];
+};
+
+type Comic = {
+  title: string;
+  genre: string;
+  tone: string;
+  summary: string;
+  characters: {
+    name: string;
+    role: string;
+    personality: string;
+    appearance: string;
+  }[];
+  pages: Page[];
+};
+
+export default function Home() {
+  const [idea, setIdea] = useState("");
+  const [genre, setGenre] = useState("Adventure");
+  const [tone, setTone] = useState("Fun");
+  const [pageCount, setPageCount] = useState(5);
+
+  const [comic, setComic] = useState<Comic | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  async function createComic() {
+    if (!idea.trim()) {
+      setError("Please enter a story idea.");
+      return;
+    }
+
+    setLoading(true);
+    setError("");
+    setComic(null);
+
+    try {
+      const response = await fetch("/api/generate", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          idea,
+          genre,
+          tone,
+          pages: pageCount,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Generation failed.");
+      }
+
+      setComic(data);
+    } catch (err) {
+      setError(
+        err instanceof Error
+          ? err.message
+          : "Something went wrong."
+      );
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  return (
+    <main className="min-h-screen bg-[#09090f] text-white">
+      {/* Navbar */}
+      <nav className="border-b border-white/10 bg-black/30 px-6 py-5">
+        <div className="mx-auto flex max-w-7xl items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-pink-500 to-purple-600 text-2xl">
+              💥
+            </div>
+
+            <div>
+              <h1 className="text-xl font-black">
+                Comic<span className="text-pink-400">Craft</span>
+              </h1>
+
+              <p className="text-xs text-gray-500">
+                AI Comic Story Creator
+              </p>
+            </div>
+          </div>
+
+          <span className="rounded-full border border-purple-400/20 bg-purple-500/10 px-4 py-2 text-xs text-purple-300">
+            Powered by Gemini
+          </span>
+        </div>
+      </nav>
+
+      {/* Hero */}
+      <section className="mx-auto max-w-7xl px-6 pb-16 pt-20">
+        <div className="mx-auto max-w-4xl text-center">
+          <div className="mb-6 inline-flex rounded-full border border-pink-400/20 bg-pink-500/10 px-5 py-2 text-sm text-pink-300">
+            ✨ Turn ideas into comics
+          </div>
+
+          <h2 className="text-5xl font-black leading-tight md:text-7xl">
+            Your imagination.
+            <br />
+
+            <span className="bg-gradient-to-r from-pink-400 via-purple-400 to-cyan-400 bg-clip-text text-transparent">
+              Your comic.
+            </span>
+          </h2>
+
+          <p className="mx-auto mt-7 max-w-2xl text-lg leading-8 text-gray-400">
+            Describe your story and let AI create characters,
+            pages, panels, scenes and dialogue for your comic.
+          </p>
+        </div>
+
+        {/* Generator */}
+        <div className="mx-auto mt-14 max-w-4xl rounded-3xl border border-white/10 bg-white/[0.04] p-6 shadow-2xl shadow-purple-900/20 md:p-8">
+          <label className="mb-3 block text-sm font-semibold text-gray-300">
+            What should your comic be about?
+          </label>
+
+          <textarea
+            value={idea}
+            onChange={(e) => setIdea(e.target.value)}
+            placeholder="Example: A 15-year-old student discovers a mysterious robot underneath his school..."
+            className="h-36 w-full resize-none rounded-2xl border border-white/10 bg-black/30 p-5 text-white outline-none transition placeholder:text-gray-600 focus:border-pink-500"
+          />
+
+          <div className="mt-6 grid gap-4 md:grid-cols-3">
+            <div>
+              <label className="mb-2 block text-sm text-gray-400">
+                Genre
+              </label>
+
+              <select
+                value={genre}
+                onChange={(e) => setGenre(e.target.value)}
+                className="w-full rounded-xl border border-white/10 bg-[#11111a] p-3 outline-none"
+              >
+                <option>Adventure</option>
+                <option>Fantasy</option>
+                <option>Science Fiction</option>
+                <option>Comedy</option>
+                <option>Mystery</option>
+                <option>Superhero</option>
+                <option>Horror</option>
+                <option>Romance</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="mb-2 block text-sm text-gray-400">
+                Tone
+              </label>
+
+              <select
+                value={tone}
+                onChange={(e) => setTone(e.target.value)}
+                className="w-full rounded-xl border border-white/10 bg-[#11111a] p-3 outline-none"
+              >
+                <option>Fun</option>
+                <option>Dramatic</option>
+                <option>Dark</option>
+                <option>Emotional</option>
+                <option>Inspirational</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="mb-2 block text-sm text-gray-400">
+                Pages
+              </label>
+
+              <select
+                value={pageCount}
+                onChange={(e) =>
+                  setPageCount(Number(e.target.value))
+                }
+                className="w-full rounded-xl border border-white/10 bg-[#11111a] p-3 outline-none"
+              >
+                <option value={3}>3 Pages</option>
+                <option value={5}>5 Pages</option>
+                <option value={8}>8 Pages</option>
+                <option value={10}>10 Pages</option>
+              </select>
+            </div>
+          </div>
+
+          {error && (
+            <div className="mt-5 rounded-xl border border-red-500/20 bg-red-500/10 p-4 text-sm text-red-300">
+              {error}
+            </div>
+          )}
+
+          <button
+            onClick={createComic}
+            disabled={loading}
+            className="mt-6 w-full rounded-xl bg-gradient-to-r from-pink-500 to-purple-600 py-4 font-bold transition hover:scale-[1.01] disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            {loading
+              ? "✨ Creating your comic..."
+              : "✨ Generate My Comic"}
+          </button>
+        </div>
+      </section>
+
+      {/* Result */}
+      {comic && (
+        <section className="mx-auto max-w-7xl px-6 pb-20">
+          <div className="mb-10">
+            <p className="text-sm font-semibold uppercase tracking-widest text-pink-400">
+              Your Comic
+            </p>
+
+            <h2 className="mt-2 text-4xl font-black">
+              {comic.title}
+            </h2>
+
+            <p className="mt-4 max-w-3xl text-gray-400">
+              {comic.summary}
+            </p>
+          </div>
+
+          {/* Characters */}
+          <div className="mb-14">
+            <h3 className="mb-5 text-2xl font-bold">
+              Characters
+            </h3>
+
+            <div className="grid gap-5 md:grid-cols-3">
+              {comic.characters?.map((character, index) => (
+                <div
+                  key={index}
+                  className="rounded-2xl border border-white/10 bg-white/[0.04] p-6"
+                >
+                  <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-purple-500 to-pink-500 text-xl">
+                    👤
+                  </div>
+
+                  <h4 className="text-xl font-bold">
+                    {character.name}
+                  </h4>
+
+                  <p className="mt-1 text-sm text-pink-400">
+                    {character.role}
+                  </p>
+
+                  <p className="mt-4 text-sm text-gray-400">
+                    {character.personality}
+                  </p>
+
+                  <p className="mt-3 text-sm text-gray-500">
+                    {character.appearance}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Pages */}
+          <div className="space-y-12">
+            {comic.pages?.map((page) => (
+              <div key={page.pageNumber}>
+                <div className="mb-5 flex items-center gap-4">
+                  <span className="rounded-lg bg-pink-500 px-3 py-1 text-sm font-bold">
+                    PAGE {page.pageNumber}
+                  </span>
+
+                  <h3 className="text-2xl font-bold">
+                    {page.title}
+                  </h3>
+                </div>
+
+                <div className="grid gap-5 md:grid-cols-2">
+                  {page.panels?.map((panel) => (
+                    <div
+                      key={panel.panelNumber}
+                      className="overflow-hidden rounded-2xl border-4 border-black bg-white text-black shadow-xl"
+                    >
+                      {/* Comic artwork placeholder */}
+                      <div className="relative flex min-h-[280px] items-center justify-center bg-gradient-to-br from-indigo-200 via-purple-100 to-pink-200 p-8">
+                        <div className="absolute left-4 top-4 rounded-lg bg-black px-3 py-1 text-xs font-bold text-white">
+                          PANEL {panel.panelNumber}
+                        </div>
+
+                        <p className="max-w-md text-center text-lg font-semibold">
+                          {panel.sceneDescription}
+                        </p>
+                      </div>
+
+                      {/* Caption */}
+                      {panel.caption && (
+                        <div className="bg-yellow-100 p-4 text-sm font-medium">
+                          {panel.caption}
+                        </div>
+                      )}
+
+                      {/* Dialogue */}
+                      <div className="space-y-3 p-5">
+                        {panel.dialogue?.map(
+                          (dialogue, index) => (
+                            <div
+                              key={index}
+                              className="rounded-2xl border-2 border-black bg-white p-3"
+                            >
+                              <strong>
+                                {dialogue.character}
+                              </strong>
+
+                              <p className="mt-1">
+                                {dialogue.text}
+                              </p>
+                            </div>
+                          )
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* Features */}
+      {!comic && (
+        <section className="mx-auto grid max-w-7xl gap-5 px-6 pb-20 md:grid-cols-3">
+          <Feature
+            icon="💡"
+            title="Story Generation"
+            text="Turn a simple idea into a complete comic story."
+          />
+
+          <Feature
+            icon="🧑‍🎨"
+            title="Characters"
+            text="Generate characters with personalities and appearances."
+          />
+
+          <Feature
+            icon="💬"
+            title="Dialogue"
+            text="Create dialogue that fits each character and scene."
+          />
+        </section>
+      )}
+    </main>
+  );
+}
+
+function Feature({
+  icon,
+  title,
+  text,
+}: {
+  icon: string;
+  title: string;
+  text: string;
+}) {
+  return (
+    <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-7">
+      <div className="text-4xl">{icon}</div>
+
+      <h3 className="mt-5 text-xl font-bold">
+        {title}
+      </h3>
+
+      <p className="mt-2 text-gray-500">
+        {text}
+      </p>
+    </div>
+  );
+}
+```
+
+ ### 3\. Create `app/api/generate/route.ts`
+
+```
+import { NextRequest, NextResponse } from "next/server";
+import { GoogleGenAI } from "@google/genai";
+
+const ai = new GoogleGenAI({
+  apiKey: process.env.GEMINI_API_KEY,
+});
+
+export async function POST(request: NextRequest) {
+  try {
+    const {
+      idea,
+      genre = "Adventure",
+      tone = "Fun",
+      pages = 5,
+    } = await request.json();
+
+    if (!idea || typeof idea !== "string") {
+      return NextResponse.json(
+        { error: "Story idea is required." },
+        { status: 400 }
+      );
+    }
+
+    const prompt = `
+You are ComicCraft, an AI comic story creator.
+
+Create an original comic from this idea:
+
+"${idea}"
+
+Genre: ${genre}
+Tone: ${tone}
+Number of pages: ${pages}
+
+Create 2-5 main characters.
+
+Create exactly ${pages} pages.
+
+Create 3 or 4 panels per page.
+
+The story must have:
+- Beginning
+- Conflict
+- Development
+- Climax
+- Resolution
+
+Maintain character consistency across all pages.
+
+Return ONLY valid JSON.
+
+Use exactly this structure:
+
+{
+  "title": "string",
+  "genre": "string",
+  "tone": "string",
+  "summary": "string",
+  "characters": [
+    {
+      "name": "string",
+      "role": "string",
+      "personality": "string",
+      "appearance": "string"
+    }
+  ],
+  "pages": [
+    {
+      "pageNumber": 1,
+      "title": "string",
+      "panels": [
+        {
+          "panelNumber": 1,
+          "sceneDescription": "string",
+          "caption": "string",
+          "visualPrompt": "string",
+          "dialogue": [
+            {
+              "character": "string",
+              "text": "string"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+`;
+
+    const response = await ai.models.generateContent({
+      model: "gemini-2.5-flash",
+      contents: prompt,
+      config: {
+        responseMimeType: "application/json",
+      },
+    });
+
+    const text = response.text;
+
+    if (!text) {
+      return NextResponse.json(
+        { error: "Gemini returned an empty response." },
+        { status: 500 }
+      );
+    }
+
+    let comic;
+
+    try {
+      comic = JSON.parse(text);
+    } catch {
+      return NextResponse.json(
+        { error: "Gemini returned invalid JSON." },
+        { status: 500 }
+      );
+    }
+
+    return NextResponse.json(comic);
+  } catch (error) {
+    console.error("Comic generation error:", error);
+
+    return NextResponse.json(
+      {
+        error:
+          "Unable to generate the comic. Please try again.",
+      },
+      { status: 500 }
+    );
+  }
+}
+```
+
+ ### 4\. Run it
+
+```
+npm run dev
+```
+
+ Open:
+
+```
+http://localhost:3000
+```
+
+ This version gives you a working **ComicCraft AI comic generator** with:
+
+ - Modern landing page
+- Story idea input
+- Genre selection
+- Tone selection
+- Page selection
+- Gemini integration
+- AI story generation
+- Character generation
+- Page generation
+- Panel generation
+- Dialogue generation
+- Comic-style preview
+- Error handling
+- Responsive UI
+
+ The next major code addition should be **actual comic images for each panel + database saving + login**, turning this starter into a full production-style ComicCraft application.
